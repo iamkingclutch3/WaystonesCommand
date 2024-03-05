@@ -1,0 +1,5 @@
+name: WaystonesCommand
+version: '${project.version}'
+main: com.kingclutch.waystonescommand.WaystonesCommand
+api-version: '1.20'
+depend: [FancyWaystones]
