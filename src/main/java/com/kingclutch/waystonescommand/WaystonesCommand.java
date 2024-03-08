@@ -10,6 +10,11 @@ import thito.fancywaystones.event.WaystoneActivateEvent;
 import thito.fancywaystones.event.WaystoneDestroyEvent;
 import thito.fancywaystones.event.WaystonePlaceEvent;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class WaystonesCommand extends JavaPlugin implements Listener {
 
     //private static final int SAVE_INTERVAL = 60; // 60 ticks, adjust as needed
@@ -29,10 +34,12 @@ public class WaystonesCommand extends JavaPlugin implements Listener {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::reloadConfigTask, 0L, RELOAD_INTERVAL);
     }
 
+    /*
     private void saveConfigTask() {
         // Save the configuration
         saveConfig();
     }
+    */
 
     private void reloadConfigTask() {
         // Reload the configuration
@@ -52,12 +59,15 @@ public class WaystonesCommand extends JavaPlugin implements Listener {
         // Check if the UUID is present in the configuration
         if (getConfig().contains("waystones." + waystoneUUID)) {
             // Retrieve the command associated with the UUID
-            String commandToExecute = getConfig().getString("waystones." + waystoneUUID + ".command");
+            List<String> commandsToExecute = getConfig().getStringList("waystones." + waystoneUUID + ".commands");
 
             // Check if the command is not null
-            if (commandToExecute != null && !commandToExecute.isEmpty() && !commandToExecute.equals("default_command_here")) {
-                // Execute the command
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), commandToExecute);
+            if (commandsToExecute != null && !commandsToExecute.isEmpty()) {
+                // Execute each command in the list
+                for (String command : commandsToExecute) {
+                    String replacedCommand = PlaceholderAPI.setPlaceholders(event.getPlayerData().getPlayer(), command);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), replacedCommand);
+                }
             }
         }
     }
@@ -69,7 +79,7 @@ public class WaystonesCommand extends JavaPlugin implements Listener {
 
         // Add the UUID and a default command to the config
         ConfigurationSection waystoneSection = getConfig().createSection("waystones." + waystoneUUID);
-        waystoneSection.set("command", "default_command_here");
+        waystoneSection.set("commands", Arrays.asList("default_command_here", "another_command"));
 
         // Add comments with waystone name and coordinates
         waystoneSection.set("name", event.getWaystoneData().getName());

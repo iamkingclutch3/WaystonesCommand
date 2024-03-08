@@ -2,4 +2,4 @@ name: WaystonesCommand
 version: '1.0-SNAPSHOT'
 main: com.kingclutch.waystonescommand.WaystonesCommand
 api-version: '1.20'
-depend: [FancyWaystones]
+depend: [FancyWaystones,PlaceholderAPI]
